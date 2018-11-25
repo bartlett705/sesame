@@ -1,0 +1,18 @@
+{
+  "name": "sesame",
+  "version": "0.0.1",
+  "description": "opens something",
+  "main": "index.js",
+  "dependencies": {
+    "forever": "^0.15.3",
+    "onoff": "^3.2.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "deploy": "scp -P 5235 index.js *.html ahmad@192.168.0.11:/home/ahmad/sesame",
+    "start:production": "BUILD_TYPE=prod forever --watch -m 5 -o ../sesame.prod.log --append index.js",
+    "test": "jest"
+  },
+  "author": "Ahmad",
+  "license": "ISC"
+}

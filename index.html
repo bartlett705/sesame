@@ -1,0 +1,30 @@
+<html>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      background-color: #436;
+      color: whitesmoke;
+    }
+
+    button {
+      border: 0;
+      padding: 1rem;
+      border-radius: 0.1rem;
+      background-color: #1f9ff1;
+      cursor: pointer;
+    }
+  </style>
+  <body>
+    <h1>Hi there.</h1>
+    <button onclick="trigger()">Open</button>
+    <script>
+      function trigger() {
+        console.log("open sesame!");
+        fetch("/open");
+      }
+    </script>
+  </body>
+</html>
