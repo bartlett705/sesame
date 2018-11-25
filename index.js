@@ -3,26 +3,68 @@ const http = require("http");
 const path = require("path");
 const fs = require("fs");
 const LED = new Gpio(4, "out");
+require("dotenv").config();
 
 const PORT = 1337; // B)
 
 let state = LED.readSync();
+
+function parseCookies(request) {
+  var list = {},
+    rc = request.headers.cookie;
+
+  rc &&
+    rc.split(";").forEach(function(cookie) {
+      var parts = cookie.split("=");
+      list[parts.shift().trim()] = decodeURI(parts.join("="));
+    });
+
+  return list;
+}
 
 const server = http.createServer((req, res) => {
   console.log("got a REQ", req.url);
 
   /** JUICY BITS */
   if (req.url === "/open") {
+    const { auth } = parseCookies(req);
+    if (!auth || auth !== process.env.TOKEN) {
+      res.writeHead(403);
+      res.end("Nah-uh");
+      return;
+    }
+
     state = state === 0 ? 1 : 0;
     LED.writeSync(state);
     res.writeHead(200);
     res.end(`set ${state} thxkbai`);
+  } else if (req.url === "/auth") {
+    let data = [];
+    req.on("data", (chunk) => {
+      data.push(chunk);
+    });
+    req.on("end", () => {
+      const key = JSON.parse(data).key; // 'Buy the milk'
+      console.log(`got key ${key}`);
+      if (key === process.env.AUTH_SECRET) {
+        res.writeHead(204, {
+          "Set-Cookie": `auth=${process.env.TOKEN}`,
+          Location: "/"
+        });
+        res.end("ok");
+      } else {
+        res.writeHead(403);
+        res.end("Nope.");
+      }
+    });
   }
 
   /** END JUICY BITS; BEGIN MDN BOILERPLATE */
   var filePath = "." + req.url;
   if (filePath == "./") {
     filePath = "./index.html";
+  } else if (filePath === "./login") {
+    filePath = "./login.html";
   }
 
   var extname = String(path.extname(filePath)).toLowerCase();

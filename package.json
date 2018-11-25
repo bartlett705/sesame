@@ -4,12 +4,13 @@
   "description": "opens something",
   "main": "index.js",
   "dependencies": {
+    "dotenv": "^6.1.0",
     "forever": "^0.15.3",
     "onoff": "^3.2.2"
   },
   "devDependencies": {},
   "scripts": {
-    "deploy": "scp -P 5235 index.js *.html ahmad@192.168.0.11:/home/ahmad/sesame",
+    "deploy": "scp -P 5235 index.js *.html .env ahmad@192.168.0.11:/home/ahmad/sesame",
     "start:production": "BUILD_TYPE=prod forever --watch -m 5 -o ../sesame.prod.log --append index.js",
     "test": "jest"
   },
