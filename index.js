@@ -3,7 +3,11 @@ const http = require("http");
 const path = require("path");
 const fs = require("fs");
 const LED = new Gpio(4, "out");
+const uuidv4 = require("uuid/v4");
+
 require("dotenv").config();
+
+let secret = "";
 
 const PORT = 1337; // B)
 
@@ -28,7 +32,7 @@ const server = http.createServer((req, res) => {
   /** JUICY BITS */
   if (req.url === "/open") {
     const { auth } = parseCookies(req);
-    if (!auth || auth !== process.env.TOKEN) {
+    if (!auth || auth !== secret) {
       res.writeHead(403);
       res.end("Nah-uh");
       return;
@@ -44,11 +48,13 @@ const server = http.createServer((req, res) => {
       data.push(chunk);
     });
     req.on("end", () => {
-      const key = JSON.parse(data).key; // 'Buy the milk'
+      const key = JSON.parse(data).key;
       console.log(`got key ${key}`);
       if (key === process.env.AUTH_SECRET) {
+        console.log("Auth'd! Setting cookie");
+        secret = uuidv4();
         res.writeHead(204, {
-          "Set-Cookie": `auth=${process.env.TOKEN}`,
+          "Set-Cookie": `auth=${secret}`,
           Location: "/"
         });
         res.end("ok");

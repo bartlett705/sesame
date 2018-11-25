@@ -6,7 +6,8 @@
   "dependencies": {
     "dotenv": "^6.1.0",
     "forever": "^0.15.3",
-    "onoff": "^3.2.2"
+    "onoff": "^3.2.2",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {},
   "scripts": {
